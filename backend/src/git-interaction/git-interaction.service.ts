@@ -148,6 +148,7 @@ export class GitInteractionService {
         );
         if (sub.SHA !== latestSHA) {
           console.log(sub.SHA + ' ' + latestSHA);
+          sub.SHA = latestSHA;
           updatedRepoSHAs.push(sub);
           await this.repoSHADatabaseService.updateRepositorySHA(sub, latestSHA);
           await this.redisService.updateValue(

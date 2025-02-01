@@ -81,18 +81,18 @@ export class GenerateCodeSummaryService implements OnModuleInit {
         const peerDeveloperSummary: string =
           await this.aiService.getSummaryFromAiModel(
             peerDeveloperPrompt,
-            'groq',
+            'gemini',
           );
 
         const managerPrompt: string =
           this.aiService.generateManagerPrompt(retrievedCode);
         const managerSummary: string =
-          await this.aiService.getSummaryFromAiModel(managerPrompt, 'groq');
+          await this.aiService.getSummaryFromAiModel(managerPrompt, 'gemini');
 
         const learnerPrompt: string =
           this.aiService.generateLearnerPrompt(retrievedCode);
         const learnerSummary: string =
-          await this.aiService.getSummaryFromAiModel(learnerPrompt, 'groq');
+          await this.aiService.getSummaryFromAiModel(learnerPrompt, 'gemini');
 
         // Check if there are recipients before sending emails
         if (peerDeveloperMailList) {
@@ -116,7 +116,7 @@ export class GenerateCodeSummaryService implements OnModuleInit {
             retrievedCode,
           );
           const customPromptSummary: string =
-            await this.aiService.getSummaryFromAiModel(prompt, 'groq');
+            await this.aiService.getSummaryFromAiModel(prompt, 'gemini');
           await this.mailService.sendMail(customPromptSummary, sub.email);
         }
       }
@@ -133,7 +133,7 @@ export class GenerateCodeSummaryService implements OnModuleInit {
     const prompt: string = this.aiService.generatePeerDeveloperPrompt(code);
     const summary: string = await this.aiService.getSummaryFromAiModel(
       prompt,
-      'groq',
+      'gemini',
     );
     this.mailService.sendMail(summary, 'karthik.pv77@gmail.com');
     return 'successful';
@@ -166,7 +166,7 @@ export class GenerateCodeSummaryService implements OnModuleInit {
     const prompt: string = this.aiService.generatePeerDeveloperPrompt(code);
     const summary: string = await this.aiService.getSummaryFromAiModel(
       prompt,
-      'groq',
+      'gemini',
     );
     this.mailService.sendMail(summary, 'karthik.pv77@gmail.com');
     return 'successful';
