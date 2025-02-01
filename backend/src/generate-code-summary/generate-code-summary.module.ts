@@ -6,6 +6,7 @@ import { GitInteractionModule } from 'src/git-interaction/git-interaction.module
 import { AiApiHandlerModule } from 'src/ai-api-handler/ai-api-handler.module';
 import { SubscriptionModule } from 'src/subscription/subscription.module';
 import { MailerModule } from 'src/mailer/mailer.module';
+import { RedisCacheModule } from 'src/redis-cache/redis-cache.module';
 
 @Module({
   controllers: [GenerateCodeSummaryController],
@@ -16,6 +17,7 @@ import { MailerModule } from 'src/mailer/mailer.module';
     AiApiHandlerModule,
     SubscriptionModule,
     MailerModule,
+    RedisCacheModule,
   ],
 })
 export class GenerateCodeSummaryModule {}

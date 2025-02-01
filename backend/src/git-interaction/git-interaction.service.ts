@@ -6,11 +6,13 @@ import {
   subscription,
   subscriptionSchema,
 } from 'src/database/schemas/subscription.schema';
+import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 
 @Injectable()
 export class GitInteractionService {
   constructor(
     private repoSHADatabaseService: repositoryBranchSHADatabaseService,
+    private redisService: RedisCacheService,
   ) {}
   private formatRetrievedCodeToString(patchData: any): string {
     const formattedPatches = patchData.map((patch) => {
@@ -148,6 +150,11 @@ export class GitInteractionService {
           console.log(sub.SHA + ' ' + latestSHA);
           updatedRepoSHAs.push(sub);
           await this.repoSHADatabaseService.updateRepositorySHA(sub, latestSHA);
+          await this.redisService.updateValue(
+            sub.repository,
+            sub.branch,
+            latestSHA,
+          );
         }
       }
     } catch (error) {

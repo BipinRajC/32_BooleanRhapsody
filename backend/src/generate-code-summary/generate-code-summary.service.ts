@@ -6,6 +6,7 @@ import { MailerService } from 'src/mailer/mailer.service';
 import { SubscriptionService } from 'src/subscription/subscription.service';
 import { subscription } from 'src/database/schemas/subscription.schema';
 import { repositoryBranchSHADatabaseService } from 'src/database/services/repositoryBranchSHA.service';
+import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 
 @Injectable()
 export class GenerateCodeSummaryService implements OnModuleInit {
@@ -15,6 +16,7 @@ export class GenerateCodeSummaryService implements OnModuleInit {
     private aiService: AiApiHandlerService,
     private mailService: MailerService,
     private repoDBSHAService: repositoryBranchSHADatabaseService,
+    private redisService: RedisCacheService,
   ) {}
 
   async subscriptionCore(
@@ -63,7 +65,6 @@ export class GenerateCodeSummaryService implements OnModuleInit {
         }
       }
 
-      // Remove trailing commas
       peerDeveloperMailList = peerDeveloperMailList.slice(0, -1);
       managerMailList = managerMailList.slice(0, -1);
       learnerMailList = learnerMailList.slice(0, -1);
@@ -163,6 +164,8 @@ export class GenerateCodeSummaryService implements OnModuleInit {
   }
 
   private startInterval() {
+    this.redisService.clearRedisBeforeMigration();
+    this.redisService.migrateRepositoriesToRedis();
     this.subscriptionCycle();
     setInterval(
       () => {

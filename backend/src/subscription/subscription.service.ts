@@ -3,12 +3,14 @@ import { subscriptionDatabaseService } from 'src/database/services/subscription.
 import { repositoryBranchSHADatabaseService } from 'src/database/services/repositoryBranchSHA.service';
 import { subscription } from 'src/database/schemas/subscription.schema';
 import { repositoryBranchSHA } from 'src/database/schemas/repositoryBranchSHA.schema';
+import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
 
 @Injectable()
 export class SubscriptionService {
   constructor(
     private subService: subscriptionDatabaseService,
     private repoSHAService: repositoryBranchSHADatabaseService,
+    private redisService: RedisCacheService,
   ) {}
 
   async createSubscription(subObj: subscription): Promise<subscription> {
@@ -17,6 +19,7 @@ export class SubscriptionService {
       branch: subObj.branch,
       SHA: '',
     });
+    this.redisService.setValue(subObj.repository, subObj.branch, ' ');
     return this.subService.createSubscription(subObj);
   }
 

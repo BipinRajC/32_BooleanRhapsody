@@ -56,13 +56,6 @@ export class repositoryBranchSHADatabaseService {
             SHA: '$latestSHA', // Include the latest SHA
           },
         },
-        // Optional: Sort for consistent output
-        {
-          $sort: {
-            repository: 1,
-            branch: 1,
-          },
-        },
       ])
       .exec();
   }
