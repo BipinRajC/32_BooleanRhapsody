@@ -16,4 +16,22 @@ export class SubscriptionController {
   getRepositories(): Promise<repositoryBranchSHA[]> {
     return this.subService.getUniqueRepositories();
   }
+
+  @Post('getRepositoriesAndBranchOfUser')
+  getRepositoriesAndBranchOfUser(
+    @Body('email') email: string,
+  ): Promise<subscription[]> {
+    console.log(this.subService.getUserReposAndBranches(email));
+    return this.subService.getUserReposAndBranches(email);
+  }
+
+  @Post('deleteSubscription')
+  deleteSubscription(
+    @Body('email') email: string,
+    @Body('repository') repository: string,
+    @Body('branch') branch: string,
+  ): any {
+    console.log(email, repository, branch);
+    return this.subService.deleteSubscription(email, repository, branch);
+  }
 }

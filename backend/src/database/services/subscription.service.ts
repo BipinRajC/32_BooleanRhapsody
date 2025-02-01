@@ -47,4 +47,16 @@ export class subscriptionDatabaseService {
   async getAllSubscriptions(): Promise<subscription[]> {
     return this.sub.find().exec();
   }
+
+  async getUsersRepositoryAndBranches(email: string): Promise<subscription[]> {
+    return await this.sub.find({ email }).exec();
+  }
+
+  async unsubscribe(
+    email: string,
+    repository: string,
+    branch: string,
+  ): Promise<any> {
+    return await this.sub.deleteOne({ email, repository, branch }).exec();
+  }
 }

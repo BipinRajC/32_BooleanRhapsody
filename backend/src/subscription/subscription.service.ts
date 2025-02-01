@@ -4,6 +4,7 @@ import { repositoryBranchSHADatabaseService } from 'src/database/services/reposi
 import { subscription } from 'src/database/schemas/subscription.schema';
 import { repositoryBranchSHA } from 'src/database/schemas/repositoryBranchSHA.schema';
 import { RedisCacheService } from 'src/redis-cache/redis-cache.service';
+import { SubscribableOrPromise } from 'rxjs';
 
 @Injectable()
 export class SubscriptionService {
@@ -35,5 +36,14 @@ export class SubscriptionService {
 
   async getAllSubscription(): Promise<subscription[]> {
     return await this.subService.getAllSubscriptions();
+  }
+
+  async getUserReposAndBranches(email: string): Promise<subscription[]> {
+    console.log(await this.subService.getUsersRepositoryAndBranches(email));
+    return await this.subService.getUsersRepositoryAndBranches(email);
+  }
+
+  async deleteSubscription(email: string, repository: string, branch: string) {
+    return await this.subService.unsubscribe(email, repository, branch);
   }
 }
