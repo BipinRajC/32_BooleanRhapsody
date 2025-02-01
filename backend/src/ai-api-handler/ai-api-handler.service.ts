@@ -26,26 +26,34 @@ dotenv.config();
 @Injectable()
 export class AiApiHandlerService {
   private readonly groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
-  private readonly geminiClient = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  private readonly claudeClient = new Anthropic({ apiKey: process.env.CLAUDE_API_KEY });
+  private readonly geminiClient = new GoogleGenerativeAI(
+    process.env.GEMINI_API_KEY,
+  );
+  private readonly claudeClient = new Anthropic({
+    apiKey: process.env.CLAUDE_API_KEY,
+  });
 
   async getSummaryFromAiModel(prompt: string, provider: string) {
     try {
-      console.log('Received Prompt:',prompt)
-      console.log('Selected Provider"',provider)
+      if (prompt.length > 10000) {
+        return 'Code commit too large for now. ';
+      }
+      console.log('Received Prompt:', prompt);
+      console.log('Selected Provider"', provider);
       if (provider === 'groq') {
-        console.log('groq')
+        console.log('groq');
         return this.getGroqResponse(prompt);
       } else if (provider === 'gemini') {
-        console.log('gemini')
+        console.log('gemini');
         return this.getGeminiResponse(prompt);
       } else if (provider === 'claude') {
-        console.log('claude')
+        console.log('claude');
         return this.getClaudeResponse(prompt);
-      }
-      else {
+      } else {
         console.log('Invalid provider:', provider);
-        throw new Error('Invalid AI provider. Choose either "groq" or "gemini".');
+        throw new Error(
+          'Invalid AI provider. Choose either "groq" or "gemini".',
+        );
       }
     } catch (error) {
       console.error('Error fetching AI model response:', error);
@@ -54,7 +62,7 @@ export class AiApiHandlerService {
   }
 
   private async getGroqResponse(prompt: string) {
-    console.log('Calling Groq API....')
+    console.log('Calling Groq API....');
     const result = await this.groqClient.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'llama3-8b-8192',
@@ -64,9 +72,11 @@ export class AiApiHandlerService {
   }
 
   private async getGeminiResponse(prompt: string) {
-    const model = this.geminiClient.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = this.geminiClient.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+    });
     const result = await model.generateContent(prompt);
-    return result.response.text() + "/n/n gemini";
+    return result.response.text() + '/n/n gemini';
   }
   private async getClaudeResponse(prompt: string) {
     const result = await this.claudeClient.messages.create({
@@ -74,17 +84,16 @@ export class AiApiHandlerService {
       max_tokens: 1000,
       messages: [{ role: 'user', content: prompt }],
     });
-  
+
     // Extract all text content from Claude's response
     const responseText = result.content
-      .map(block => ('text' in block ? block.text : '')) // Get only text parts
+      .map((block) => ('text' in block ? block.text : '')) // Get only text parts
       .join('\n'); // Join multiple text parts if present
-  
+
     return responseText;
   }
 
-
-  generateManagerPrompt(code: string): string {  
+  generateManagerPrompt(code: string): string {
     return `  
 Strategic Project Management Code Review Protocol:  
 
@@ -108,10 +117,10 @@ Technical Code Context:
 ${code}  
 
 Deliverable: Concise, actionable strategic narrative for executive decision-making.  
-`;  
-  }  
+`;
+  }
 
-  generatePeerDeveloperPrompt(code: string): string {  
+  generatePeerDeveloperPrompt(code: string): string {
     return `  
 Advanced Technical Code Review Framework:  
 
@@ -135,10 +144,10 @@ Detailed Code Examination Context:
 ${code}  
 
 Deliverable: Precise, technically nuanced code review for professional developers.  
-`;  
-  }  
+`;
+  }
 
-  generateLearnerPrompt(code: string): string {  
+  generateLearnerPrompt(code: string): string {
     return `  
 Beginner-Friendly Code Learning Journey:  
 
@@ -162,10 +171,10 @@ Accessible Code Learning Context:
 ${code}  
 
 Deliverable: Engaging, comprehensible code explanation for emerging developers.  
-`;  
-  }  
+`;
+  }
 
-  generateCustomPrompt(prompt: string, code: string): string {  
+  generateCustomPrompt(prompt: string, code: string): string {
     return `  
 Custom Analysis Framework:  
 
@@ -176,6 +185,6 @@ Contextual Code Reference:
 ${code}  
 
 Deliverable: Tailored insights based on specific user requirements.  
-`;  
-  }  
+`;
+  }
 }
