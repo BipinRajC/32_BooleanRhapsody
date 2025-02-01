@@ -79,17 +79,20 @@ export class GenerateCodeSummaryService implements OnModuleInit {
         const peerDeveloperPrompt: string =
           this.aiService.generatePeerDeveloperPrompt(retrievedCode);
         const peerDeveloperSummary: string =
-          await this.aiService.getSummaryFromAiModel(peerDeveloperPrompt);
+          await this.aiService.getSummaryFromAiModel(
+            peerDeveloperPrompt,
+            'groq',
+          );
 
         const managerPrompt: string =
           this.aiService.generateManagerPrompt(retrievedCode);
         const managerSummary: string =
-          await this.aiService.getSummaryFromAiModel(managerPrompt);
+          await this.aiService.getSummaryFromAiModel(managerPrompt, 'groq');
 
         const learnerPrompt: string =
           this.aiService.generateLearnerPrompt(retrievedCode);
         const learnerSummary: string =
-          await this.aiService.getSummaryFromAiModel(learnerPrompt);
+          await this.aiService.getSummaryFromAiModel(learnerPrompt, 'groq');
 
         // Check if there are recipients before sending emails
         if (peerDeveloperMailList) {
@@ -113,7 +116,7 @@ export class GenerateCodeSummaryService implements OnModuleInit {
             retrievedCode,
           );
           const customPromptSummary: string =
-            await this.aiService.getSummaryFromAiModel(prompt);
+            await this.aiService.getSummaryFromAiModel(prompt, 'groq');
           await this.mailService.sendMail(customPromptSummary, sub.email);
         }
       }
@@ -128,14 +131,17 @@ export class GenerateCodeSummaryService implements OnModuleInit {
     const SHA: string = await this.gitService.getLatestSHAValue(link, branch);
     const code: any = await this.gitService.getUpdatedCodeFromCommit(link, SHA);
     const prompt: string = this.aiService.generatePeerDeveloperPrompt(code);
-    const summary: string = await this.aiService.getSummaryFromAiModel(prompt);
+    const summary: string = await this.aiService.getSummaryFromAiModel(
+      prompt,
+      'groq',
+    );
     this.mailService.sendMail(summary, 'karthik.pv77@gmail.com');
     return 'successful';
   }
 
   async subscriptionCycle(): Promise<string> {
     const reposAndBranches: repositoryBranchSHA[] =
-      await this.subService.getUniqueRepositories();
+      await this.redisService.getUniqueRepositories();
     const updatedRepos: repositoryBranchSHA[] =
       await this.gitService.checkIfNewCommitExists(reposAndBranches);
     console.log(updatedRepos);
@@ -158,7 +164,10 @@ export class GenerateCodeSummaryService implements OnModuleInit {
     const SHA: string = await this.gitService.getLatestSHAValue(link, branch);
     const code: any = await this.gitService.getUpdatedCodeFromCommit(link, SHA);
     const prompt: string = this.aiService.generatePeerDeveloperPrompt(code);
-    const summary: string = await this.aiService.getSummaryFromAiModel(prompt);
+    const summary: string = await this.aiService.getSummaryFromAiModel(
+      prompt,
+      'groq',
+    );
     this.mailService.sendMail(summary, 'karthik.pv77@gmail.com');
     return 'successful';
   }
@@ -171,7 +180,7 @@ export class GenerateCodeSummaryService implements OnModuleInit {
       () => {
         this.subscriptionCycle();
       },
-      2 * 60 * 1000,
+      1 * 30 * 1000,
     );
   }
   onModuleInit() {

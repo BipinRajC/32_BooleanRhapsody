@@ -7,6 +7,10 @@ export class AiApiHandlerController {
 
   @Post('sendPrompt')
   getSummary(@Body() body: string) {
-    return this.aiService.getSummaryFromAiModel(body['prompt']);
+    console.log('Received Request:', body);
+    return this.aiService.getSummaryFromAiModel(
+      body['prompt'],
+      body['provider'],
+    );
   }
 }

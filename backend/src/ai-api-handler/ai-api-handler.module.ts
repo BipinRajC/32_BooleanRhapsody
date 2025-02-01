@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { AiApiHandlerController } from './ai-api-handler.controller';
-import { AiApiHandlerService } from './ai-api-handler.service';
+import { Module } from '@nestjs/common';  
+import { AiApiHandlerService } from './ai-api-handler.service';  
+import { AiApiHandlerController } from './ai-api-handler.controller';  
 
-@Module({
-  controllers: [AiApiHandlerController],
-  providers: [AiApiHandlerService],
-  exports: [AiApiHandlerService],
-})
+@Module({  
+  controllers: [AiApiHandlerController],  
+  providers: [AiApiHandlerService],  
+  exports: [AiApiHandlerService]  
+})  
 export class AiApiHandlerModule {}
