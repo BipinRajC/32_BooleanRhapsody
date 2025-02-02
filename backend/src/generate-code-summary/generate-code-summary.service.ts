@@ -180,7 +180,7 @@ export class GenerateCodeSummaryService implements OnModuleInit {
       () => {
         this.subscriptionCycle();
       },
-      1 * 30 * 1000,
+      2 * 60 * 1000,
     );
   }
   onModuleInit() {

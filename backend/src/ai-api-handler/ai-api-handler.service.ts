@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 //import { ConfigService } from '@nestjs/config';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import * as dotenv from 'dotenv';
+import { DocumentRetrievalUtil } from './utils';
 import Groq from 'groq-sdk';
 import Anthropic from '@anthropic-ai/sdk';
+import axios from 'axios';
 
 // @Injectable()
 //export class AiApiHandlerService {
@@ -35,8 +37,15 @@ export class AiApiHandlerService {
 
   async getSummaryFromAiModel(prompt: string, provider: string) {
     try {
-      if (prompt.length > 10000) {
-        return 'Code commit too large for now. ';
+      if (prompt.length > 1000) {
+        const response = await axios.post(
+          'http://localhost:5001/api/summarize',
+          {
+            content: prompt,
+          },
+        );
+        console.log(response.data);
+        return (await response).data.summary;
       }
       console.log('Received Prompt:', prompt);
       console.log('Selected Provider"', provider);
